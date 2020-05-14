@@ -1,0 +1,152 @@
+
+systemd-analyze blame
+
+---
+          13.373s sav-protect.service
+          7.808s NetworkManager-wait-online.service
+          6.332s motd-news.service
+          4.797s plymouth-quit-wait.service
+          3.530s docker.service
+          2.977s snap.lxd.activate.service
+          2.031s dev-mapper-ubuntu\x2d\x2dvg\x2droot.device
+          1.805s snapd.service
+          1.724s bolt.service
+          1.513s vboxdrv.service
+          1.239s sssd.service
+           807ms keyboard-setup.service
+           714ms mpd.service
+           643ms tlp.service
+           624ms dev-loop9.device
+           611ms dev-loop13.device
+           606ms dev-loop8.device
+           606ms dev-loop10.device
+           588ms dev-loop11.device
+           569ms dev-loop12.device
+           552ms dev-loop14.device
+           548ms dev-loop15.device
+           538ms dev-loop17.device
+           524ms dev-loop18.device
+           520ms dev-loop16.device
+           412ms udisks2.service
+           347ms networking.service
+           341ms NetworkManager.service
+           341ms dev-loop3.device
+           331ms systemd-resolved.service
+           325ms snap-core18-1705.mount
+           323ms snap-gtk\x2dcommon\x2dthemes-1440.mount
+           307ms snap-core-8935.mount
+           301ms systemd-journal-flush.service
+           299ms dev-loop1.device
+           295ms dev-loop4.device
+           294ms dev-loop0.device
+           293ms dev-loop2.device
+           285ms networkd-dispatcher.service
+           280ms dev-loop5.device
+           278ms systemd-logind.service
+           269ms snap-core18-1668.mount
+           246ms smbd.service
+           242ms dev-loop7.device
+           239ms snap-gtk\x2dcommon\x2dthemes-1474.mount
+           223ms dev-loop6.device
+           222ms snap-zoom\x2dclient-54.mount
+           220ms preload.service
+           219ms plymouth-start.service
+           218ms grub-common.service
+           204ms snap-slack-22.mount
+
+---
+
+/opt/sophos-av/bin/savconfig set EmailNotifier disabled
+
+---
+ systemd-analyze blame
+    3min 46.309s apt-daily.service
+          9.060s sav-protect.service
+          7.361s NetworkManager-wait-online.service
+          4.742s docker.service
+          4.401s plymouth-quit-wait.service
+          2.011s snap.lxd.activate.service
+          1.748s bolt.service
+          1.704s snapd.service
+          1.443s dev-mapper-ubuntu\x2d\x2dvg\x2droot.device
+          1.106s sssd.service
+           976ms vboxdrv.service
+           643ms motd-news.service
+           628ms keyboard-setup.service
+           533ms apt-daily-upgrade.service
+           512ms mpd.service
+           387ms dev-loop11.device
+           380ms snap-gtk\x2dcommon\x2dthemes-1474.mount
+           376ms dev-loop8.device
+           339ms dev-loop10.device
+           331ms dev-loop12.device
+           326ms snap-drawio-20.mount
+           325ms NetworkManager.service
+           305ms snap-gnome\x2d3\x2d28\x2d1804-110.mount
+           303ms snap-anbox-186.mount
+           293ms dev-loop13.device
+           291ms smbd.service
+           290ms upower.service
+           285ms dev-loop14.device
+           281ms dev-loop15.device
+           277ms dev-loop16.device
+           267ms systemd-journal-flush.service
+           265ms snap-snapcraft-4282.mount
+           259ms udisks2.service
+           254ms dev-loop18.device
+           252ms snap-slack-23.mount
+           250ms networkd-dispatcher.service
+           249ms apparmor.service
+           243ms tlp.service
+           235ms dev-loop0.device
+           233ms snap-snapcraft-4234.mount
+           231ms networking.service
+           225ms snap-core18-1668.mount
+           213ms dev-loop1.device
+           211ms systemd-logind.service
+           191ms dev-loop2.device
+           190ms dev-loop20.device
+           172ms dev-loop9.device
+           166ms snap-gnome\x2d3\x2d28\x2d1804-116.mount
+           161ms dev-loop3.device
+           158ms systemd-resolved.service
+---
+
+sudo systemctl disable apt-daily.service
+sudo systemctl disable apt-daily.timer
+sudo systemctl disable apt-daily-upgrade.timer
+sudo systemctl disable apt-daily-upgrade.service
+
+---
+
+systemd-analyze critical-chain
+The time after the unit is active or started is printed after the "@" character.
+The time the unit takes to start is printed after the "+" character.
+
+graphical.target @14.538s
+└─multi-user.target @14.538s
+  └─docker.service @9.795s +4.742s
+    └─network-online.target @9.795s
+      └─NetworkManager-wait-online.service @2.433s +7.361s
+        └─NetworkManager.service @2.101s +325ms
+          └─dbus.service @2.028s
+            └─basic.target @2.007s
+              └─sockets.target @2.007s
+                └─docker.socket @2.001s +5ms
+                  └─sysinit.target @1.999s
+                    └─apparmor.service @1.750s +249ms
+                      └─local-fs.target @1.748s
+                        └─run-user-1657615686-gvfs.mount @2min 41.920s
+                          └─run-user-1657615686.mount @2min 21.512s
+                            └─swap.target @1.619s
+                              └─dev-mapper-ubuntu\x2d\x2dvg\x2dswap_1.swap @1.610s +8ms
+                                └─dev-mapper-ubuntu\x2d\x2dvg\x2dswap_1.device @1.609s
+                                
+---
+docker system prune
+docker system prune --volumes
+---
+
+--- Don't start docker on startup but on 1st docker call.
+systemctl enable docker.socket
+systemctl disable docker.service
