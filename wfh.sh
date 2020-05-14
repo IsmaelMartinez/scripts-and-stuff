@@ -11,5 +11,3 @@ echo "#### Authenticating with Okta in staging account ####"
 okta-awscli --okta-profile staging --profile staging -d
 echo "#### Starting VPN service ####"
 sudo vpnc
-echo "#### Starting VPN proxy in port 1080 ####"
-ssh -D 1080 edi-devjump.pluk.eeghlan.net
